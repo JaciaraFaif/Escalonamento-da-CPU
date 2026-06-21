@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="CPU.css">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <title>Document</title>
+</head>
+<body>
+  <h1>Descrição Resumida do Projeto</h1>
+  <h2>Ojectivo Geral</h2>
+  <p>Desenvolvi um simulador de escalonamento de CPU em C++ que implementa 6 algoritmos de escalonamento (3 não preemptivos e 3 preemptivos), lendo processos de um ficheiro de texto e escrevendo os tempos de espera (Waiting Times) e a média num ficheiro de saída, tudo sem utilizar arrays.</p>
+  <table>
+    <tr>
+      <th>Algoritmo</th>
+      <th>Tipo</th>
+      <th>Número</th>
+    </tr>
+    <tr>
+      <td>FCFS (First-Come, First-Served)</td>
+      <td>Não Preemptivo</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <td>SJF (Shortest Job First)</td>
+      <td>Não Preemptivo</td>
+      <td>2</td>
+    </tr>
+    <tr>
+      <td>SRTF (SJF Preemptivo)</td>
+      <td>Preemptivo</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>Priority (Prioridade)</td>
+      <td>Não Preemptivo</td>
+      <td>4</td>
+    </tr>
+    <tr>
+      <td>Priority Preemptivo</td>
+      <td>Preemptivo</td>
+      <td>5</td>
+    </tr>
+      <tr>
+        <td>Round Robin (com quantum)</td>
+        <td>Preemptivo</td>
+        <td>6</td>
+      </tr>
+  </table>
+  <h2>Estrutura do Programa </h2>
+  <ol type="1">
+    <li>Leitura de Argumentos
+      <ul>
+        <li>-t <valor> → quantum (1–255) para o Round Robin</li>
+        <li>-f <inputfile> → ficheiro de entrada com os processos</li>
+        <li>-o <outputfile> → ficheiro de saída para os resultados</li>
+      </ul>
+    </li>
+    <li> Ficheiro de Entreda
+      <ul>
+        <li>Formato: burstTime:arrivalTime:priority (um processo por linha)</li>
+        <li>Leitura dinâmica (número ilimitado de processos)</li>
+      </ul>
+    </li>
+    <li>Estruturas de Dados
+      <ul>
+        <li>struct Process → contém ID, burstTime, arrivalTime, priority, waitingTime, Remaing_time</li>
+        <li>struct node → nó da lista ligada para os processos</li>
+        <li>struct ResultsNode → nó da lista ligada para os resultados</li>
+      </ul>
+    </li>
+    <li> Operações com Listas Ligadas (sem arrays)
+      <ul>
+        <li>insertBack / insertBackRR → inserção no fim</li>
+        <li>insertBurstOrdered → inserção ordenada por burstTime</li>
+        <li>insertPriorityOrdered → inserção ordenada por prioridade</li>
+        <li>insertRemaingOrdered → inserção ordenada por remainingTime</li>
+        <li>removeHead → remoção do primeiro nó</li>
+        <li>copyList → cópia profunda da lista</li>
+        <li>freeProcess / freeResults → libertação de memória</li>
+      </ul>
+    </li>
+    <li> Algoritmos de Escalonamento
+      <ul>
+        <li>FCFS() → fila FIFO, não preemptivo</li>
+        <li>SJF() → fila ordenada por burstTime, não preemptivo</li>
+        <li>SJF_Preemptive() → fila ordenada por remainingTime, preemptivo (SRTF)</li>
+        <li>Priority() → fila ordenada por prioridade, não preemptivo</li>
+        <li>Priority_Preemptive() → fila ordenada por prioridade, preemptivo</li>
+        <li>RR() → fila FIFO com quantum, preemptivo</li>
+      </ul>
+    </li>
+    <li> Fila de Prontos
+      <ul>
+        <li>Lista ligada que contém os processos prontos para executar</li>
+        <li>Processos são movidos da lista notReady para a Ready quando arrivalTime <= tempo_atual</li>
+        <li>Cada algoritmo ordena a fila de forma diferente</li>
+      </ul>
+    </li>
+    <li>Cálculo do Waiting Time
+      <ul>
+        <li>Não preemptivos: waitingTime = tempo_atual - arrivalTime</li>
+        <li>Preemptivos: waitingTime = tempo_termino - arrivalTime - burstTime (calculado no término)</li>
+      </ul>
+    </li>
+    <li> Ficheiro de Saída
+      <ul>
+        <li>Formato: algoritmo:wt1:wt2:...:media (com duas casas decimais)</li>
+        <li>Exemplo: 1:0:4:8:10:13:7.00</li>
+        <li>Algoritmos não implementados escrevem 0:0:0:...:0.00</li>
+      </ul>
+    </li>
+  </ol>
+  <h2>Desafios Superados</h2>
+  <ul>
+    <li>Sem arrays: todas as estruturas são listas ligadas com alocação dinâmica</li>
+    <li>Gestão de memória: new e delete para evitar memory leaks</li>
+    <li>Ordenação dinâmica: inserção ordenada em listas ligadas (bubble sort adaptado)</li>
+    <li>Preempção: controlo de processos interrompidos e reinserção na fila</li>
+    <li>Processos com chegadas diferentes: lista notReady para processos que ainda não chegaram</li>
+    <li>Cópia da lista original: cada algoritmo trabalha com a sua própria cópia</li>
+  </ul>
+  <h2>Tecnologias Utilizadas</h2>
+  <ul>
+    <li>Linguagem: C++ (sem usar arrays)</li>
+    <li>Compilador: g++ no Linux</li>
+    <li>Bibliotecas: iostream, fstream, string, iomanip, cstdlib</li>
+  </ul>
+  <h2>Exemplo de Execução</h2>
+  <p>Execução:</p>
+  <p>./cmpe351 -t 2 -f input.txt -o output.txt</p>
+  <div><p>input.txt:</p>
+    <p>0:5:2</p>
+    <p>1:3:1</p>
+    <p>2:3:3</p>
+  </div>
+  <div>
+    <p>Output</p>
+    <p>1:0:4:6:3.33</p>
+    <p>2:0:6:3:3.00</p>
+    <p>3:5:2:0:2.33</p>
+    <p>4:4:0:7:3.67</p>
+    <p>5:3:0:6:3.00</p>
+    <p>6:3:3:4:3.33</p>
+  </div>
+  <h2>Resumo Final</h2>
+  <P>O projeto consistiu na implementação completa de um simulador de escalonamento de CPU em C++, utilizando listas ligadas como estrutura principal (sem arrays), com 6 algoritmos de escalonamento, leitura dinâmica de ficheiros, argumentos por linha de comando e geração de ficheiro de saída com os tempos de espera. O programa é robusto, trata memory leaks e suporta qualquer número de processos.</P>
+  <a href="https://github.com/JaciaraFaif/Escalonamento-da-CPU/blob/main/cmpe351.cpp" class="code">Ver o Codigo completo C++</a>
+</body>
+</html>
