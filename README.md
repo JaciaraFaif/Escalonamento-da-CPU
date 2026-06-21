@@ -1,1 +1,2 @@
 # Escalonamento-da-CPU
+O projeto consistiu na implementação completa de um simulador de escalonamento de CPU em C++, utilizando listas ligadas como estrutura principal (sem arrays), com 6 algoritmos de escalonamento, leitura dinâmica de ficheiros, argumentos por linha de comando e geração de ficheiro de saída com os tempos de espera. O programa é robusto, trata memory leaks e suporta qualquer número de processos.
